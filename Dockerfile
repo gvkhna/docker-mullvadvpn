@@ -26,6 +26,7 @@ RUN apt-get update \
   && apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
   && apt-get install -qq -y --no-install-recommends \
   bash \
+  ca-certificates \
   curl \
   wget \
   && apt-get autoremove -y \
