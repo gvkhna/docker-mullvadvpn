@@ -1,6 +1,4 @@
-
-
-FROM ubuntu:22.04
+FROM ubuntu:latest
 
 ENV container docker
 ENV LC_ALL C
