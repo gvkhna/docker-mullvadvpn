@@ -9,18 +9,18 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN cd /lib/systemd/system/sysinit.target.wants/ \
-    && rm $(ls | grep -v systemd-tmpfiles-setup)
+# RUN cd /lib/systemd/system/sysinit.target.wants/ \
+#     && rm $(ls | grep -v systemd-tmpfiles-setup)
 
-RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
-    /etc/systemd/system/*.wants/* \
-    /lib/systemd/system/local-fs.target.wants/* \
-    /lib/systemd/system/sockets.target.wants/*udev* \
-    /lib/systemd/system/sockets.target.wants/*initctl* \
-    /lib/systemd/system/basic.target.wants/* \
-    /lib/systemd/system/anaconda.target.wants/* \
-    /lib/systemd/system/plymouth* \
-    /lib/systemd/system/systemd-update-utmp*
+# RUN rm -f /lib/systemd/system/multi-user.target.wants/* \
+#     /etc/systemd/system/*.wants/* \
+#     /lib/systemd/system/local-fs.target.wants/* \
+#     /lib/systemd/system/sockets.target.wants/*udev* \
+#     /lib/systemd/system/sockets.target.wants/*initctl* \
+#     /lib/systemd/system/basic.target.wants/* \
+#     /lib/systemd/system/anaconda.target.wants/* \
+#     /lib/systemd/system/plymouth* \
+#     /lib/systemd/system/systemd-update-utmp*
 
 RUN apt-get update \
   && apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
@@ -35,7 +35,7 @@ RUN apt-get update \
 
 WORKDIR "/root"
 
-RUN wget --content-disposition https://mullvad.net/download/app/deb/latest \
+RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb/latest \
   && apt install -y ./MullvadVPN*.deb \
   && rm -rf ./MullvadVPN*.deb
 
