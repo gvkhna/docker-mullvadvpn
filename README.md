@@ -4,16 +4,33 @@ A Docker container with the linux Mullvad cli client.
 
 # Setup
 
-Before running setup a folder to contain your mullvad setting files such as "myappdata/mullvadvpn"
+Before running setup a folder to contain your mullvad setting files such as `"myappdata/mullvadvpn"`
 
-1. Copy etc-mullvad.template files into "myappdata/mullvadvpn"
+1. Copy `etc-mullvad.template` files into `"myappdata/mullvadvpn"`
 
-Your myappdata/mullvadvpn should contain `account-history.json`,`device.json`, and `settings.json`
+Your `myappdata/mullvadvpn` should contain `account-history.json`,`device.json`, and `settings.json`
 
 2. Run with the following similar flags 
 
 ```sh
 docker run --privileged --name mullvadvpn -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v myappdata/mullvadvpn:/etc/mullvad-vpn:rw mullvadvpn
+```
+
+3. Login and setup your relay and account
+
+```sh
+docker exec -ti mullvadvpn bash
+```
+
+```sh
+mullvad relay set location se mma
+mullvad account login 1234123412341234
+```
+
+4. You can use the mullvad API with a bash_alias added for convenience to check you are connected
+
+```sh
+curlcheck
 ```
 
 # Details
