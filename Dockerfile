@@ -28,6 +28,10 @@ RUN apt-get update \
   bash \
   ca-certificates \
   curl \
+  iproute2 \
+  iputils-ping \
+  nftables \
+  dnsutils \
   wget \
   && apt-get autoremove -y \
   && apt-get clean \
@@ -36,8 +40,7 @@ RUN apt-get update \
 WORKDIR "/root"
 
 RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb/latest \
-  && apt install -y ./MullvadVPN*.deb \
-  && rm -rf ./MullvadVPN*.deb
+    && apt install -y ./Mullvad*.deb || true
 
 VOLUME [ "/sys/fs/cgroup" ]
 
