@@ -43,6 +43,11 @@ WORKDIR "/root"
 RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb/latest \
     && apt install -y ./Mullvad*.deb || true
 
+RUN printf "\n\
+  alias curlcheck='curl https://am.i.mullvad.net/connected'\n\
+  alias curljson='curl https://am.i.mullvad.net/json'\n\
+  " > /root/.bash_aliases
+
 VOLUME [ "/sys/fs/cgroup" ]
 
 CMD ["/lib/systemd/systemd"]

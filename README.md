@@ -32,8 +32,10 @@ This at the bare minimum will ensure no leaking of packets upon startup even wit
 To verify you can run the following commands upon starting the container:
 
 ```sh
-mullvad status
-nft list tables
+root@3138e96e42d9:~# nft list tables
+table inet mullvad
+table ip mullvadmangle4
+table ip6 mullvadmangle6
 ```
 
 
