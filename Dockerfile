@@ -1,4 +1,5 @@
 FROM ubuntu:latest
+LABEL org.opencontainers.image.description Mullvad CLI Docker Image
 
 ENV container docker
 ENV LC_ALL C
