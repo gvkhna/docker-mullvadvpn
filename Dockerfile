@@ -51,7 +51,7 @@ WORKDIR "/root"
 RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb/latest \
     && apt install -y ./Mullvad*.deb || true
 
-COPY rclocal.sh /etc/rc.local
+COPY rc-local.sh /etc/rc.local
 COPY container-input-ports.sh /etc/container-input-ports.sh
 RUN chmod u+x /etc/rc.local \
   && chmod +x /etc/container-input-ports.sh
