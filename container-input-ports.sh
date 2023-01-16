@@ -1,10 +1,12 @@
 #!/bin/bash
 
+source /etc/container_environment.sh
+
 # initialise arrays for incoming ports
 incoming_ports_ext_array=()
 incoming_ports_lan_array=()
 
-echo "[env] ${VPN_INPUT_PORTS}"
+echo "[env VPN_INPUT_PORTS] ${VPN_INPUT_PORTS}"
 
 # if vpn input ports specified then add to incoming ports external array
 if [[ ! -z "${VPN_INPUT_PORTS}" ]]; then
