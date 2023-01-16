@@ -94,7 +94,7 @@ Here's how you can do that:
 
 ```sh
 export VPN_INPUT_PORTS="8080"
-bash /etc/contianer-input-ports.sh > /var/log/container-input-ports.log 2>&1
+bash /etc/container-input-ports.sh > /var/log/container-input-ports.log 2>&1
 ```
 
 # Development
