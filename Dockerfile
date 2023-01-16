@@ -60,6 +60,7 @@ RUN chmod u+x /etc/rc.local \
 RUN printf "\n\
   alias curlcheck='curl https://am.i.mullvad.net/connected'\n\
   alias curljson='curl https://am.i.mullvad.net/json'\n\
+  alias mullvadkey='mullvad tunnel wireguard key check'\n\
   " > /root/.bash_aliases
 
 VOLUME [ "/sys/fs/cgroup" ]
