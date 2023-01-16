@@ -84,5 +84,33 @@ ip route add default via 172.10.250.250
 ip route add 192.168.1.0/24 via 172.10.0.1
 ```
 
+## INPUT PORTS
 
+If you connect a container's network to this container, you may need to open a port to that container.
+
+Here's how you can do that:
+
+1. In your `00-startup.sh` file add the following
+
+```sh
+export VPN_INPUT_PORTS="8080"
+bash /etc/contianer-input-ports.sh > /var/log/container-input-ports.log 2>&1
+```
+
+# Development
+
+`docker build -t mullvadvpn .`
+`docker rm mullvadvpn`
+`docker run --privileged --name mullvadvpn -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v appdata/etc-mullvadvpn:/etc/mullvad-vpn:rw -v appdata/custom-init.d:/etc/custom-init.d:ro mullvadvpn`
+`docker exec -ti mullvadvpn bash`
+
+Run the following commands: 
+
+`ip route show`
+`ip rule list`
+`cat /var/log/container-input-ports.log`
+`curlcheck`
+`netstat -an`
+
+iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for allowing vpn input ports.
 Based on [jrei/systemd-ubuntu](https://hub.docker.com/r/jrei/systemd-ubuntu) for systemd support.

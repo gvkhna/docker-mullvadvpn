@@ -1,9 +1,12 @@
 FROM ubuntu:latest
+MAINTAINER gvkhna
+LABEL org.opencontainers.image.authors="gvkhna@gvkhna.com"
 LABEL org.opencontainers.image.description Mullvad CLI Docker Image
 
 ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
+ENV CI true
 
 RUN apt-get update \
     && apt-get install -y systemd systemd-sysv runit-systemd \
@@ -33,7 +36,10 @@ RUN apt-get update \
   iproute2 \
   iptables \
   iputils-ping \
+  kmod \
+  lsof \
   nano \
+  net-tools \
   nftables \
   wget \
   && apt-get autoremove -y \
@@ -45,14 +51,10 @@ WORKDIR "/root"
 RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb/latest \
     && apt install -y ./Mullvad*.deb || true
 
-RUN printf "#\041/bin/sh\n\
-  if [ -f /etc/custom-init.d/00-startup.sh ]; then\n\
-    echo '[custom-init] Running 00-startup.sh...'\n\
-    /bin/bash /etc/custom-init.d/00-startup.sh\n\
-  fi\n\
-  exit 0\n\
-  " > /etc/rc.local \
-  && chmod u+x /etc/rc.local
+COPY rclocal.sh /etc/rc.local
+COPY container-input-ports.sh /etc/container-input-ports.sh
+RUN chmod u+x /etc/rc.local \
+  && chmod +x /etc/container-input-ports.sh
 
 RUN printf "\n\
   alias curlcheck='curl https://am.i.mullvad.net/connected'\n\
