@@ -6,7 +6,11 @@ source /etc/container_environment.sh
 incoming_ports_ext_array=()
 incoming_ports_lan_array=()
 
-echo "[env VPN_INPUT_PORTS] ${VPN_INPUT_PORTS}"
+DEBUG='true'
+
+if [[ "${DEBUG}" == "true" ]]; then
+	echo "[container-input-ports] [debug] VPN_INPUT_PORTS=${VPN_INPUT_PORTS}"
+fi
 
 # if vpn input ports specified then add to incoming ports external array
 if [[ ! -z "${VPN_INPUT_PORTS}" ]]; then
@@ -28,23 +32,23 @@ fi
 # identify docker bridge interface name by looking at defult route
 docker_interface=$(ip -4 route ls | grep default | xargs | grep -o -P '[^\s]+$')
 if [[ "${DEBUG}" == "true" ]]; then
-	echo "[debug] Docker interface defined as ${docker_interface}"
+	echo "[container-input-ports] [debug] Docker interface defined as ${docker_interface}"
 fi
 
 # identify ip for local gateway (eth0)
 default_gateway=$(ip route show default | awk '/default/ {print $3}')
-echo "[info] Default route for container is ${default_gateway}"
+echo "[container-input-ports] [info] Default route for container is ${default_gateway}"
 
 # identify ip for docker bridge interface
 docker_ip=$(ifconfig "${docker_interface}" | grep -P -o -m 1 '(?<=inet\s)[^\s]+')
 if [[ "${DEBUG}" == "true" ]]; then
-	echo "[debug] Docker IP defined as ${docker_ip}"
+	echo "[container-input-ports] [debug] Docker IP defined as ${docker_ip}"
 fi
 
 # identify netmask for docker bridge interface
 docker_mask=$(ifconfig "${docker_interface}" | grep -P -o -m 1 '(?<=netmask\s)[^\s]+')
 if [[ "${DEBUG}" == "true" ]]; then
-	echo "[debug] Docker netmask defined as ${docker_mask}"
+	echo "[container-input-ports] [debug] Docker netmask defined as ${docker_mask}"
 fi
 
 # array for both protocols
@@ -52,7 +56,7 @@ multi_protocol_array=(tcp udp)
 
 # convert netmask into cidr format
 docker_network_cidr=$(ipcalc "${docker_ip}" "${docker_mask}" | grep -P -o -m 1 "(?<=Network:)\s+[^\s]+")
-echo "[info] Docker network defined as ${docker_network_cidr}"
+echo "[container-input-ports] [info] Docker network defined as ${docker_network_cidr}"
 
 # split comma separated string into array from LAN_NETWORK env variable
 IFS=',' read -ra lan_network_array <<< "${LAN_NETWORK}"
@@ -69,21 +73,21 @@ for lan_network_item in "${lan_network_array[@]}"; do
 	# strip whitespace from start and end of lan_network_item
 	lan_network_item=$(echo "${lan_network_item}" | sed -e 's~^[ \t]*~~;s~[ \t]*$~~')
 
-	echo "[info] Adding ${lan_network_item} as route via docker ${docker_interface}"
+	echo "[container-input-ports] [info] Adding ${lan_network_item} as route via docker ${docker_interface}"
 	ip route add "${lan_network_item}" via "${default_gateway}" dev "${docker_interface}"
 
 done
 
-echo "[info] ip route defined as follows..."
-echo "--------------------"
+echo "[container-input-ports] [info] ip route defined as follows..."
+echo "[container-input-ports] --------------------"
 ip route s t all
-echo "--------------------"
+echo "[container-input-ports] --------------------"
 
 # iptables marks
 ###
 
 if [[ "${DEBUG}" == "true" ]]; then
-	echo "[debug] Modules currently loaded for kernel" ; lsmod
+	echo "[container-input-ports] [debug] Modules currently loaded for kernel" ; lsmod
 fi
 
 # check we have iptable_mangle, if so setup fwmark
@@ -92,7 +96,7 @@ iptable_mangle_exit_code="${?}"
 
 if [[ "${iptable_mangle_exit_code}" == 0 ]]; then
 
-	echo "[info] iptable_mangle support detected, adding fwmark for tables"
+	echo "[container-input-ports] [info] iptable_mangle support detected, adding fwmark for tables"
 
 	mark=0
 
@@ -274,3 +278,17 @@ done
 # iptables -S 2>&1 | tee /tmp/getiptables
 # chmod +r /tmp/getiptables
 # echo "--------------------"
+
+if [[ "${DEBUG}" == "true" ]]; then
+	echo "[container-input-ports] [debug] VPN_ALLOW_FORWARDING=${VPN_ALLOW_FORWARDING}"
+fi
+
+if [ -z $VPN_ALLOW_FORWARDING ]; then
+  echo '[container-input-ports] Allowing Packet Forwarding...' > /dev/console
+  iptables -P FORWARD ACCEPT
+  iptables -t nat -A POSTROUTING -o wg+ -j MASQUERADE
+fi
+
+if [[ "${DEBUG}" == "true" ]]; then
+	echo "[container-input-ports] Done."
+fi
