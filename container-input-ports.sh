@@ -4,6 +4,8 @@
 incoming_ports_ext_array=()
 incoming_ports_lan_array=()
 
+echo "[env] ${VPN_INPUT_PORTS}"
+
 # if vpn input ports specified then add to incoming ports external array
 if [[ ! -z "${VPN_INPUT_PORTS}" ]]; then
 

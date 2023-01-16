@@ -33,6 +33,7 @@ RUN apt-get update \
   ca-certificates \
   curl \
   dnsutils \
+  ipcalc \
   iproute2 \
   iptables \
   iputils-ping \
