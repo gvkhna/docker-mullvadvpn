@@ -100,16 +100,23 @@ bash /etc/container-input-ports.sh > /var/log/container-input-ports.log 2>&1
 # Development
 
 `docker build -t mullvadvpn .`
+
 `docker rm mullvadvpn`
+
 `docker run --privileged --name mullvadvpn -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v appdata/etc-mullvadvpn:/etc/mullvad-vpn:rw -v appdata/custom-init.d:/etc/custom-init.d:ro mullvadvpn`
+
 `docker exec -ti mullvadvpn bash`
 
 Run the following commands: 
 
 `ip route show`
+
 `ip rule list`
+
 `cat /var/log/container-input-ports.log`
+
 `curlcheck`
+
 `netstat -an`
 
 iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for allowing vpn input ports.
