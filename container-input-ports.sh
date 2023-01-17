@@ -6,11 +6,8 @@ source /etc/container_environment.sh
 incoming_ports_ext_array=()
 incoming_ports_lan_array=()
 
-DEBUG='true'
+echo "[container-input-ports] VPN_INPUT_PORTS=${VPN_INPUT_PORTS}"
 
-if [[ "${DEBUG}" == "true" ]]; then
-	echo "[container-input-ports] [debug] VPN_INPUT_PORTS=${VPN_INPUT_PORTS}"
-fi
 
 # if vpn input ports specified then add to incoming ports external array
 if [[ ! -z "${VPN_INPUT_PORTS}" ]]; then
@@ -279,9 +276,7 @@ done
 # chmod +r /tmp/getiptables
 # echo "--------------------"
 
-if [[ "${DEBUG}" == "true" ]]; then
-	echo "[container-input-ports] [debug] VPN_ALLOW_FORWARDING=${VPN_ALLOW_FORWARDING}"
-fi
+echo "[container-input-ports] VPN_ALLOW_FORWARDING=${VPN_ALLOW_FORWARDING}"
 
 if [ -z $VPN_ALLOW_FORWARDING ]; then
   echo '[container-input-ports] Allowing Packet Forwarding...' > /dev/console
@@ -289,6 +284,4 @@ if [ -z $VPN_ALLOW_FORWARDING ]; then
   iptables -t nat -A POSTROUTING -o wg+ -j MASQUERADE
 fi
 
-if [[ "${DEBUG}" == "true" ]]; then
-	echo "[container-input-ports] Done."
-fi
+echo "[container-input-ports] Done."
