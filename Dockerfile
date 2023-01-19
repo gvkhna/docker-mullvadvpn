@@ -68,9 +68,12 @@ RUN printf "\n\
 
 VOLUME [ "/sys/fs/cgroup" ]
 
+# systemd exits on SIGRTMIN+3, not SIGTERM (which re-executes it)
+# https://bugzilla.redhat.com/show_bug.cgi?id=1201657
+STOPSIGNAL SIGRTMIN+3
+
 # use systemd stdio workaround here: https://github.com/systemd/systemd/pull/4262
 RUN rm -rf /usr/sbin/init
-ADD init-console.sh /usr/sbin/init
+ADD entrypoint.sh /usr/sbin/init
 RUN chmod a+x /usr/sbin/init
-
 CMD ["/usr/sbin/init"]
