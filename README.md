@@ -13,7 +13,13 @@ Your `myappdata/mullvadvpn` should contain `account-history.json`,`device.json`,
 2. Run with the following similar flags 
 
 ```sh
-docker run --privileged --name mullvadvpn -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v myappdata/mullvadvpn:/etc/mullvad-vpn:rw mullvadvpn
+docker run 
+  --privileged 
+  --name mullvadvpn 
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro 
+  -v myappdata/mullvadvpn/etc:/etc/mullvad-vpn:rw 
+  -v myappdata/mullvadvpn/var:/var/cache/mullvad-vpn:rw
+  mullvadvpn
 ```
 
 3. Login and setup your relay and account
@@ -30,7 +36,11 @@ mullvad account login 1234123412341234
 4. You can use the mullvad API with a bash_alias added for convenience to check you are connected
 
 ```sh
-curlcheck
+curlcheck # => You are connected to Mullvad...
+```
+
+```sh
+mullvadkey # => Your Mullvad Device wireguard key
 ```
 
 # Details
@@ -57,12 +67,19 @@ table ip6 mullvadmangle6
 
 # Custom Init/Startup Script
 
-If you symlink `/etc/custom-init.d/` to `myappdata/custom-init.d/` with a file named `00-startup.sh` it will be run on boot
+If you add a volume for `/etc/custom-init.d/` to `myappdata/custom-init.d/` with a file named `00-startup.sh` it will be run on boot
 
 Similar to the following:
 
 ```sh
-docker run --privileged --name mullvadvpn -v /sys/fs/cgroup:/sys/fs/cgroup:ro -v myappdata/etc-mullvadvpn:/etc/mullvad-vpn:rw -v myappdata/custom-init.d:/etc/custom-init.d:ro mullvadvpn
+docker run 
+  --privileged 
+  --name mullvadvpn 
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro 
+  -v myappdata/etc-mullvadvpn:/etc/mullvad-vpn:rw 
+  -v myappdata/mullvadvpn/var:/var/cache/mullvad-vpn:rw
+  -v myappdata/custom-init.d:/etc/custom-init.d:ro 
+  mullvadvpn
 ```
 
 To allow nat packet forwarding add the environment variable `VPN_ALLOW_FORWARDING='true'`
@@ -108,9 +125,7 @@ Run the following commands:
 
 `ip rule list`
 
-`curlcheck`
-
 `netstat -an`
 
-iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for allowing vpn input ports.
+iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for opening vpn input ports.
 Based on [jrei/systemd-ubuntu](https://hub.docker.com/r/jrei/systemd-ubuntu) for systemd support.
