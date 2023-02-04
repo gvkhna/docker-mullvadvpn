@@ -10,7 +10,7 @@ bash /etc/container-input-ports.sh > /dev/console 2>&1
 echo '[custom-init] Looking for /etc/custom-init.d/00-startup.sh...' > /dev/console
 if [ -f /etc/custom-init.d/00-startup.sh ]; then
   echo '[custom-init] Running /etc/custom-init.d/00-startup.sh...' > /dev/console
-  /bin/bash /etc/custom-init.d/00-startup.sh
+  bash /etc/custom-init.d/00-startup.sh > /dev/console 2>&1
 fi
 
 exit 0

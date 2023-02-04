@@ -278,8 +278,8 @@ done
 
 echo "[container-input-ports] VPN_ALLOW_FORWARDING=${VPN_ALLOW_FORWARDING}"
 
-if [ -z $VPN_ALLOW_FORWARDING ]; then
-  echo '[container-input-ports] Allowing Packet Forwarding...' > /dev/console
+if [[ ! -z "${VPN_ALLOW_FORWARDING}" ]]; then
+  echo '[container-input-ports] Allowing Packet Forwarding...'
   iptables -P FORWARD ACCEPT
   iptables -t nat -A POSTROUTING -o wg+ -j MASQUERADE
 fi
