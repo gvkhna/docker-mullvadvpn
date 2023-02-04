@@ -1,5 +1,7 @@
 # Mullvad Docker Container
 
+[![Docker](https://github.com/gvkhna/docker-mullvadvpn/actions/workflows/docker-publish.yml/badge.svg?branch=main)](https://github.com/gvkhna/docker-mullvadvpn/actions/workflows/docker-publish.yml)
+
 A Docker container with the linux Mullvad cli client.
 
 # Setup
