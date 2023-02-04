@@ -127,5 +127,9 @@ Run the following commands:
 
 `netstat -an`
 
-iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for opening vpn input ports.
-Based on [jrei/systemd-ubuntu](https://hub.docker.com/r/jrei/systemd-ubuntu) for systemd support.
+
+### Credits
+
+- docker push latest if changed from [Yelp/docker-push-latest-if-changed](https://github.com/Yelp/docker-push-latest-if-changed)
+- iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for opening vpn input ports.
+- Based on [jrei/systemd-ubuntu](https://hub.docker.com/r/jrei/systemd-ubuntu) for systemd support.
