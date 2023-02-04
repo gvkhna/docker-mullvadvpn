@@ -13,6 +13,7 @@ ENV CI true
 RUN apt-get update \
   && apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
   && apt-get install -qq -y --no-install-recommends \
+  apt-utils \
   bash \
   ca-certificates \
   curl \
@@ -42,7 +43,7 @@ RUN apt-get update \
   && echo "**** clean up ****" \
   && apt-get autoremove -y \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/apt/* /var/lib/dpkg/* /var/lib/cache/* /var/lib/log/*
 
 RUN cd /lib/systemd/system/sysinit.target.wants/ \
     && rm $(ls | grep -v systemd-tmpfiles-setup)
@@ -62,7 +63,9 @@ WORKDIR "/root"
 RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb/latest \
     && apt install -y ./Mullvad*.deb || true \
     && rm -rf ./Mullvad*.deb \
-    && rm -rf /opt/Mullvad\ VPN
+    && rm -rf /opt/Mullvad\ VPN \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/apt/* /var/lib/dpkg/* /var/lib/cache/* /var/lib/log/*
 
 COPY rc-local.sh /etc/rc.local
 COPY container-input-ports.sh container-env.sh /usr/local/bin/
@@ -90,6 +93,6 @@ STOPSIGNAL SIGRTMIN+3
 
 # use systemd stdio workaround here: https://github.com/systemd/systemd/pull/4262
 RUN rm -rf /usr/sbin/init
-ADD entrypoint.sh /usr/sbin/init
+COPY entrypoint.sh /usr/sbin/init
 RUN chmod a+x /usr/sbin/init
 CMD ["/usr/sbin/init"]
