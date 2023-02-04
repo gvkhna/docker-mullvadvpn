@@ -1,0 +1,6 @@
+README.md
+.github
+etc-mullvad.template
+.gitignore
+docker-push-latest-if-changed.py
+tmp
