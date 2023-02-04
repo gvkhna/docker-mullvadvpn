@@ -30,7 +30,7 @@ jobs:
         # This is where you will update the personal access token to GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image
-      - uses: actions/setup-python@v4
+        uses: actions/setup-python@v4
         with:
           python-version: '3.x'
         run: |
