@@ -1,0 +1,17 @@
+[Unit]
+Description=CoreDNS DNS server
+Documentation=https://coredns.io
+Before=network-online.target
+
+StartLimitBurst=5
+StartLimitIntervalSec=20
+
+[Service]
+StandardOutput=file:/dev/console
+StandardError=inherit
+ExecStart=/usr/local/bin/coredns -conf=/usr/local/etc/coredns/Corefile
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

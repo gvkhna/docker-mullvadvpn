@@ -1,3 +1,5 @@
+# syntax=docker/dockerfile:1
+
 FROM ubuntu:latest
 MAINTAINER gvkhna
 LABEL org.opencontainers.image.authors="gvkhna@gvkhna.com"
@@ -30,6 +32,14 @@ RUN apt-get update \
   systemd \
   systemd-sysv \
   wget \
+  && echo "**** install CoreDNS ****" \
+  && COREDNS_VERSION=$(curl -sX GET "https://api.github.com/repos/coredns/coredns/releases/latest" \
+    | awk '/tag_name/{print $4;exit}' FS='[""]' | awk '{print substr($1,2); }') \
+  && curl -o /tmp/coredns.tar.gz -L \
+    "https://github.com/coredns/coredns/releases/download/v${COREDNS_VERSION}/coredns_${COREDNS_VERSION}_linux_amd64.tgz" \
+  && tar xf /tmp/coredns.tar.gz -C /usr/local/bin \
+  && mkdir /usr/local/etc/coredns \
+  && echo "**** clean up ****" \
   && apt-get autoremove -y \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
@@ -55,10 +65,16 @@ RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb
     && rm -rf /opt/Mullvad\ VPN
 
 COPY rc-local.sh /etc/rc.local
-COPY container-input-ports.sh container-env.sh /etc/
+COPY container-input-ports.sh container-env.sh /usr/local/bin/
 RUN chmod u+x /etc/rc.local \
-  && chmod +x /etc/container-input-ports.sh \
-  && chmod +x /etc/container-env.sh
+  && chmod +x /usr/local/bin/container-input-ports.sh \
+  && chmod +x /usr/local/bin/container-env.sh
+
+COPY Corefile /usr/local/etc/coredns/
+COPY coredns.service /usr/lib/systemd/system/
+
+RUN systemctl enable "/usr/lib/systemd/system/coredns.service" || true \
+  && systemctl start coredns.service || true
 
 RUN printf "\n\
   alias curlcheck='curl https://am.i.mullvad.net/connected'\n\

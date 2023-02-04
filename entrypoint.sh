@@ -9,6 +9,6 @@ if ! [ -e /dev/console ] ; then
 fi
 
 # save environment variables passed to container
-bash /etc/container-env.sh > /dev/console 2>&1
+bash /usr/local/bin/container-env.sh > /dev/console 2>&1
 
 exec /lib/systemd/systemd "$@"
