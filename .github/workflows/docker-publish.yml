@@ -40,5 +40,5 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          [ "$VERSION" == "main" ] && docker tag $IMAGE_NAME $IMAGE_ID:latest
+          [ "$GIT_BRANCH" == "main" ] && docker tag $IMAGE_NAME $IMAGE_ID:latest
           docker image push --all-tags $IMAGE_ID
