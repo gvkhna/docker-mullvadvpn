@@ -43,7 +43,7 @@ RUN apt-get update \
   && echo "**** clean up ****" \
   && apt-get autoremove -y \
   && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/apt/* /var/lib/dpkg/* /var/lib/cache/* /var/lib/log/*
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN cd /lib/systemd/system/sysinit.target.wants/ \
     && rm $(ls | grep -v systemd-tmpfiles-setup)
@@ -65,7 +65,7 @@ RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb
     && rm -rf ./Mullvad*.deb \
     && rm -rf /opt/Mullvad\ VPN \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /var/lib/apt/* /var/lib/dpkg/* /var/lib/cache/* /var/lib/log/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY rc-local.sh /etc/rc.local
 COPY container-input-ports.sh container-env.sh /usr/local/bin/
