@@ -22,6 +22,9 @@ jobs:
       contents: read
       packages: write
     steps:
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build image
@@ -30,9 +33,6 @@ jobs:
         # This is where you will update the personal access token to GITHUB_TOKEN
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
         run: |
           curl https://raw.githubusercontent.com/Yelp/docker-push-latest-if-changed/master/docker_push_latest_if_changed.py > docker-push-latest-if-changed.py
           chmod 755  docker-push-latest-if-changed.py
