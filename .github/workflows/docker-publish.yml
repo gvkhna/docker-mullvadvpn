@@ -22,9 +22,6 @@ jobs:
       contents: read
       packages: write
     steps:
-      - uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build image
@@ -34,19 +31,14 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image
         run: |
-          chmod 755  docker-push-latest-if-changed.py
+          URL=$(curl -w "%{url_effective}\n" -I -L -s -S https://mullvad.net/download/app/deb/latest/ -o /dev/null)
+          VERSION=$(echo $URL | grep -oP '(?<=MullvadVPN-).*(?=_amd64)')
           IMAGE_ID=ghcr.io/$IMAGE_NAME
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          # Strip git ref prefix from version
-          #VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          # Strip "v" prefix from tag name
-          #[[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          # Use Docker `latest` tag convention
-          #[ "$VERSION" == "main" ] && VERSION=latest
-          VERSION=$(date -I)
+          echo URL=$URL
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          ./docker-push-latest-if-changed.py --source $IMAGE_ID:$VERSION
-          #docker push $IMAGE_ID:$VERSION
+          [ "$VERSION" == "main" ] && docker tag $IMAGE_NAME $IMAGE_ID:latest
+          docker image push --all-tags $IMAGE_ID
