@@ -65,7 +65,9 @@ table ip mullvadmangle4
 table ip6 mullvadmangle6
 ```
 
-# Custom Init/Startup Script
+# Customization
+
+### Custom Startup Script
 
 If you add a volume for `/etc/custom-init.d/` to `myappdata/custom-init.d/` with a file named `00-startup.sh` it will be run on boot
 
@@ -81,6 +83,8 @@ docker run
   -v myappdata/custom-init.d:/etc/custom-init.d:ro 
   mullvadvpn
 ```
+
+### Packet Forwarding
 
 To allow nat packet forwarding add the environment variable `VPN_ALLOW_FORWARDING='true'`
 
@@ -103,7 +107,7 @@ ip route add default via 172.10.250.250
 ip route add 192.168.1.0/24 via 172.10.0.1
 ```
 
-## INPUT PORTS
+### INPUT PORTS
 
 If you connect a container's network to this container, you may need to open a port to that container.
 
@@ -128,7 +132,7 @@ Run the following commands:
 `netstat -an`
 
 
-### Credits
+# Credits
 
 - docker push latest if changed from [Yelp/docker-push-latest-if-changed](https://github.com/Yelp/docker-push-latest-if-changed)
 - iptables setup based on [binhex/arch-int-vpn](https://github.com/binhex/arch-int-vpn) for opening vpn input ports.
