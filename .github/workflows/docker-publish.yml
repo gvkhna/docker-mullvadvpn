@@ -34,8 +34,8 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image
         run: |
-          curl https://raw.githubusercontent.com/Yelp/docker-push-latest-if-changed/master/docker_push_latest_if_changed.py > docker-push-latest-if-changed.py
-          chmod 755  docker-push-latest-if-changed.py
+          curl https://raw.githubusercontent.com/Yelp/docker-push-latest-if-changed/master/docker_push_latest_if_changed.py > docker-push-latest-if-changed
+          chmod 755  docker-push-latest-if-changed
           IMAGE_ID=ghcr.io/$IMAGE_NAME
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
@@ -47,6 +47,6 @@ jobs:
           [ "$VERSION" == "main" ] && VERSION=latest
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
-          docker-push-latest-if-changed.py --source $IMAGE_ID:$VERSION
+          ./docker-push-latest-if-changed --source $IMAGE_ID:$VERSION
           #docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           #docker push $IMAGE_ID:$VERSION
