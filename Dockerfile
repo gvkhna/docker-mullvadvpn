@@ -33,6 +33,7 @@ RUN apt-get update \
   socat \
   systemd \
   systemd-sysv \
+  tinyproxy \
   wget \
   && echo "**** install CoreDNS ****" \
   && COREDNS_VERSION=$(curl -sX GET "https://api.github.com/repos/coredns/coredns/releases/latest" \
@@ -75,14 +76,18 @@ RUN chmod u+x /etc/rc.local \
   && chmod u+x /usr/local/bin/microsocks-exec.sh
 
 COPY Corefile /usr/local/etc/coredns/
-COPY coredns.service microsocks.service mullvad-stdout.service /usr/lib/systemd/system/
+COPY coredns.service microsocks.service mullvad-stdout.service tinyproxy.service /usr/lib/systemd/system/
+
+COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 
 RUN systemctl enable "/usr/lib/systemd/system/coredns.service" || true \
   && systemctl start coredns.service || true \
   && systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
   && systemctl start microsocks.service || true \
   && systemctl enable "/usr/lib/systemd/system/mullvad-stdout.service" || true \
-  && systemctl start mullvad-stdout.service || true
+  && systemctl start mullvad-stdout.service || true \
+  && systemctl enable "/usr/lib/systemd/system/tinyproxy.service" || true \
+  && systemctl start tinyproxy.service || true
 
 RUN printf "\n\
   alias curlcheck='curl https://am.i.mullvad.net/connected'\n\

@@ -1,0 +1,19 @@
+[Unit]
+Description=Tinyproxy server
+Documentation=https://github.com/tinyproxy/tinyproxy
+Before=network-online.target
+
+StartLimitBurst=5
+StartLimitIntervalSec=20
+
+[Service]
+StandardOutput=file:/dev/console
+StandardError=inherit
+EnvironmentFile=/usr/local/etc/container_environment
+ExecCondition=[ "${TINYPROXY_ENABLE}" == "true" ]
+ExecStart=tinyproxy -d -c /etc/tinyproxy/tinyproxy.conf
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

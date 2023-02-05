@@ -71,7 +71,15 @@ MICROSOCKS_PASS=socks
 
 Disable username/password authentication by setting `MICROSOCKS_AUTH_NONE=true`
 
-**Make sure to specifiy the port in your VPN_INPUT_PORTS otherwise your socks proxy will not be reachable**
+## Tinyproxy (HTTP Proxy)
+
+Optionally enable a HTTP Proxy with the environment variable `TINYPROXY_ENABLE=true`
+
+You can edit the config by mounting a volume with a `tinyproxy.conf` file to `/etc/tinyproxy/`
+
+By default the the proxy port is `8888` and the proxy url would be `http://HOSTNAME:8888`
+
+**Make sure to specifiy the port in your VPN_INPUT_PORTS otherwise your proxy will not be reachable**
 
 ```sh
 VPN_INPUT_PORTS=9118
