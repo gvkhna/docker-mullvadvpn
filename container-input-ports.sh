@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source /usr/local/bin/container_environment.sh
+# source /usr/local/bin/container_environment.sh
+source /usr/local/etc/container_environment
 
 # initialise arrays for incoming ports
 incoming_ports_ext_array=()

@@ -1,0 +1,19 @@
+[Unit]
+Description=Microsocks server
+Documentation=https://github.com/rofl0r/microsocks
+Before=network-online.target
+
+StartLimitBurst=5
+StartLimitIntervalSec=20
+
+[Service]
+StandardOutput=file:/dev/console
+StandardError=inherit
+EnvironmentFile=/usr/local/etc/container_environment
+ExecCondition=[ "${MICROSOCKS_ENABLE}" == "true" ]
+ExecStart=/usr/bin/bash /usr/local/bin/microsocks-exec.sh
+Restart=always
+RestartSec=1
+
+[Install]
+WantedBy=multi-user.target

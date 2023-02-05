@@ -25,6 +25,7 @@ RUN apt-get update \
   iputils-ping \
   kmod \
   lsof \
+  microsocks \
   nano \
   net-tools \
   nftables \
@@ -68,16 +69,20 @@ RUN wget --content-disposition --no-verbose https://mullvad.net/download/app/deb
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY rc-local.sh /etc/rc.local
-COPY container-input-ports.sh container-env.sh /usr/local/bin/
+COPY container-input-ports.sh microsocks-exec.sh /usr/local/bin/
 RUN chmod u+x /etc/rc.local \
   && chmod +x /usr/local/bin/container-input-ports.sh \
-  && chmod +x /usr/local/bin/container-env.sh
+  && chmod u+x /usr/local/bin/microsocks-exec.sh
 
 COPY Corefile /usr/local/etc/coredns/
-COPY coredns.service /usr/lib/systemd/system/
+COPY coredns.service microsocks.service mullvad-stdout.service /usr/lib/systemd/system/
 
 RUN systemctl enable "/usr/lib/systemd/system/coredns.service" || true \
-  && systemctl start coredns.service || true
+  && systemctl start coredns.service || true \
+  && systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
+  && systemctl start microsocks.service || true \
+  && systemctl enable "/usr/lib/systemd/system/mullvad-stdout.service" || true \
+  && systemctl start mullvad-stdout.service || true
 
 RUN printf "\n\
   alias curlcheck='curl https://am.i.mullvad.net/connected'\n\

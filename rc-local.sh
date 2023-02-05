@@ -1,7 +1,7 @@
 #!/bin/sh
 
-# start journalctl to follow mullvad-daemon logs
-journalctl -f _EXE=/usr/bin/mullvad-daemon > /dev/console &
+# Finish pending tasks
+apt -f install
 
 # open any vpn input ports/config
 bash /usr/local/bin/container-input-ports.sh > /dev/console 2>&1

@@ -45,6 +45,36 @@ curlcheck # => You are connected to Mullvad...
 mullvadkey # => Your Mullvad Device wireguard key
 ```
 
+## Microsocks (SOCKS5 Proxy)
+
+Optionally enable a SOCKS5 Proxy with the environment variable `MICROSOCKS_ENABLE=true`
+
+```sh
+docker run 
+  --privileged 
+  --name mullvadvpn 
+  -v /sys/fs/cgroup:/sys/fs/cgroup:ro 
+  -v myappdata/mullvadvpn/etc:/etc/mullvad-vpn:rw 
+  -v myappdata/mullvadvpn/var:/var/cache/mullvad-vpn:rw
+  -e MICROSOCKS_ENABLE='true'
+  mullvadvpn
+```
+
+Additional environment variables can be used to customize the following properties of the socks server. The defaults below are used if not specified.
+
+```sh
+MICROSOCKS_BIND_ADDR=0.0.0.0
+MICROSOCKS_PORT=9118
+MICROSOCKS_USER=admin
+MICROSOCKS_PASS=socks
+```
+
+**Make sure to specifiy the port in your VPN_INPUT_PORTS otherwise your socks proxy will not be reachable**
+
+```sh
+VPN_INPUT_PORTS=9118
+```
+
 # Details
 
 The etc-mullvad.template files are example files generated from mullvad-cli with the following configurations set:
@@ -103,9 +133,11 @@ This can be used for setting routes of another container instead of changing the
 For example run the following on startup in the secondary container. If your mullvad container has a static ip address set at `172.10.250.250`, then your default route will be set to the mullvad container, which means default packets will travel through your vpn. This also has a route set for local LAN that keeps LAN accessible by routing it through the secondary container directly.
 
 ```sh
-echo 'Changing default routes to mullvadvpn'
+# Changing default routes to mullvadvpn
 ip route del default
 ip route add default via 172.10.250.250
+
+# Add LAN network access by routing LAN traffic directly to the host (not VPN container)
 ip route add 192.168.1.0/24 via 172.10.0.1
 ```
 
@@ -128,10 +160,10 @@ Set the following Environment Variable to a list of ports `VPN_INPUT_PORTS=8080,
 Run the following commands: 
 
 `ip route show`
-
 `ip rule list`
-
 `netstat -an`
+`systemctl list-units`
+`systemctl list-dependencies`
 
 
 # Credits
