@@ -45,7 +45,7 @@ curlcheck # => You are connected to Mullvad...
 mullvadkey # => Your Mullvad Device wireguard key
 ```
 
-## Microsocks (SOCKS5 Proxy)
+### Microsocks (SOCKS5 Proxy)
 
 Optionally enable a SOCKS5 Proxy with the environment variable `MICROSOCKS_ENABLE=true`
 
@@ -71,7 +71,7 @@ MICROSOCKS_PASS=socks
 
 Disable username/password authentication by setting `MICROSOCKS_AUTH_NONE=true`
 
-## Tinyproxy (HTTP Proxy)
+### Tinyproxy (HTTP Proxy)
 
 Optionally enable a HTTP Proxy with the environment variable `TINYPROXY_ENABLE=true`
 
@@ -82,7 +82,7 @@ By default the the proxy port is `8888` and the proxy url would be `http://HOSTN
 **Make sure to specifiy the port in your VPN_INPUT_PORTS otherwise your proxy will not be reachable**
 
 ```sh
-VPN_INPUT_PORTS=9118
+VPN_INPUT_PORTS=8888,9118
 ```
 
 # Details
