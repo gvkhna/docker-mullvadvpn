@@ -69,6 +69,8 @@ MICROSOCKS_USER=admin
 MICROSOCKS_PASS=socks
 ```
 
+Disable username/password authentication by setting `MICROSOCKS_AUTH_NONE=true`
+
 **Make sure to specifiy the port in your VPN_INPUT_PORTS otherwise your socks proxy will not be reachable**
 
 ```sh

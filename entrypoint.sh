@@ -17,6 +17,7 @@ sh -c "set" | grep \
   -e 'MICROSOCKS_PORT=' \
   -e 'MICROSOCKS_USER=' \
   -e 'MICROSOCKS_PASS=' \
+  -e 'MICROSOCKS_AUTH_NONE=' \
   -e 'DEBUG=' \
    > /usr/local/etc/container_environment
 
