@@ -2,7 +2,7 @@ name: Docker
 
 on:
   schedule:
-   - cron: '15 18 * * 2'
+   - cron: '0 0 * * *'
   push:
     branches: [ "main" ]
 
@@ -28,9 +28,22 @@ jobs:
       - name: Push image
         run: |
           printenv | sort
+
+          # GITHUB_EVENT_NAME=push
+          # GITHUB_REF_NAME=main
+          # GITHUB_REF_TYPE=branch
+          # GITHUB_TRIGGERING_ACTOR=gvkhna
+
           URL=$(curl -w "%{url_effective}\n" -I -L -s -S https://mullvad.net/download/app/deb/latest/ -o /dev/null)
           VERSION=$(echo $URL | grep -oP '(?<=MullvadVPN-).*(?=_amd64)')
           IMAGE_ID=ghcr.io/$IMAGE_NAME
+
+          # Check if version tag already exists
+          echo "Checking Docker version tag exists..."
+          docker manifest inspect $IMAGE_ID:$VERSION > /dev/null
+          echo $?
+          echo "Version tag check done, 0 if exists else 1..."
+
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo URL=$URL

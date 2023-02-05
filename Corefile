@@ -1,5 +1,4 @@
 . {
     loop
-    health :18184
     forward . /etc/resolv.conf
 }
