@@ -27,6 +27,7 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image
         run: |
+          printenv | sort
           URL=$(curl -w "%{url_effective}\n" -I -L -s -S https://mullvad.net/download/app/deb/latest/ -o /dev/null)
           VERSION=$(echo $URL | grep -oP '(?<=MullvadVPN-).*(?=_amd64)')
           IMAGE_ID=ghcr.io/$IMAGE_NAME
