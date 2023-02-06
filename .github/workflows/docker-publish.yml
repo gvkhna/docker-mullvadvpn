@@ -27,28 +27,29 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
       - name: Push image
         run: |
-          printenv | sort
-
-          # GITHUB_EVENT_NAME=push
-          # GITHUB_REF_NAME=main
-          # GITHUB_REF_TYPE=branch
-          # GITHUB_TRIGGERING_ACTOR=gvkhna
+          # GITHUB_EVENT_NAME='schedule' when cron triggered
+          # GITHUB_EVENT_NAME='push' when commit is pushed
+          
+          echo GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME
 
           URL=$(curl -w "%{url_effective}\n" -I -L -s -S https://mullvad.net/download/app/deb/latest/ -o /dev/null)
           VERSION=$(echo $URL | grep -oP '(?<=MullvadVPN-).*(?=_amd64)')
           IMAGE_ID=ghcr.io/$IMAGE_NAME
-
-          # Check if version tag already exists
-          echo "Checking Docker version tag exists..."
-          docker manifest inspect $IMAGE_ID:$VERSION > /dev/null
-          echo $?
-          echo "Version tag check done, 0 if exists else 1..."
-
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo URL=$URL
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          docker tag $IMAGE_NAME $IMAGE_ID:latest
-          docker image push --all-tags $IMAGE_ID
+
+          echo "Checking version tag exists..."
+          VERSION_EXISTS=$(docker manifest inspect $IMAGE_ID:$VERSION > /dev/null)
+          # 0 if exists else 1
+          echo VERSION_EXISTS=$VERSION_EXISTS
+          
+          if [ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0"]; then
+            echo "Skipping existing version update..."
+          else
+            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+            docker tag $IMAGE_NAME $IMAGE_ID:latest
+            docker image push --all-tags $IMAGE_ID
+          fi
