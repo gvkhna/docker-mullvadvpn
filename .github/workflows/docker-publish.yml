@@ -43,7 +43,7 @@ jobs:
           
           # Check daily for new version of Mullvad automatically
           # If trigger is a cron build, and existing version already has been built, skip.
-          # Otherwise, it was a push, or a new version exists... in which build/deply.
+          # Otherwise, it was a push, or a new version exists... in which case build/deploy.
           if [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0" ]]; then
             echo "------------------------------------"
             echo "Plan: Skipping build..."
