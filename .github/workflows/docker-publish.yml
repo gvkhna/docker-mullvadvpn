@@ -21,11 +21,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Build and Deploy
-        run: |
+        run: |          
+          echo GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME
           # GITHUB_EVENT_NAME='schedule' when cron triggered
           # GITHUB_EVENT_NAME='push' when commit is pushed
-          
-          echo GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME
 
           URL=$(curl -w "%{url_effective}\n" -I -L -s -S https://mullvad.net/download/app/deb/latest/ -o /dev/null)
           VERSION=$(echo $URL | grep -oP '(?<=MullvadVPN-).*(?=_amd64)')
@@ -49,10 +48,12 @@ jobs:
           else
             echo "Building Image..."
             docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+            
             echo "Logging in to registry..."
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+            
             echo "Pushing new build..."
-            # docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-            # docker tag $IMAGE_NAME $IMAGE_ID:latest
-            # docker image push --all-tags $IMAGE_ID
+            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+            docker tag $IMAGE_NAME $IMAGE_ID:latest
+            docker image push --all-tags $IMAGE_ID
           fi
