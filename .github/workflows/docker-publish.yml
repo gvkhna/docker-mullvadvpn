@@ -46,10 +46,11 @@ jobs:
           # 0 if exists else 1
           echo VERSION_EXISTS=$VERSION_EXISTS
           
-          if [ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0"]; then
+          if [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0" ]]; then
             echo "Skipping existing version update..."
           else
-            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-            docker tag $IMAGE_NAME $IMAGE_ID:latest
-            docker image push --all-tags $IMAGE_ID
+            echo "Pushing new build..."
+            # docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+            # docker tag $IMAGE_NAME $IMAGE_ID:latest
+            # docker image push --all-tags $IMAGE_ID
           fi
