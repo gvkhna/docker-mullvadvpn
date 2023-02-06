@@ -20,12 +20,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Build image
-        run: docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
-      - name: Log in to registry
-        # This is where you will update the personal access token to GITHUB_TOKEN
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-      - name: Push image
+      - name: Build and Deploy
         run: |
           # GITHUB_EVENT_NAME='schedule' when cron triggered
           # GITHUB_EVENT_NAME='push' when commit is pushed
@@ -46,9 +41,16 @@ jobs:
           # 0 if exists else 1
           echo VERSION_EXISTS=$VERSION_EXISTS
           
+          # Check daily for new version of Mullvad automatically
+          # If trigger is a cron build, and existing version already has been built, skip.
+          # Otherwise, it was a push, or a new version exists... in which build/deply.
           if [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0" ]]; then
             echo "Skipping existing version update..."
           else
+            echo "Building Image..."
+            docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+            echo "Logging in to registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
             echo "Pushing new build..."
             # docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
             # docker tag $IMAGE_NAME $IMAGE_ID:latest
