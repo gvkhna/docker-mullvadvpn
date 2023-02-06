@@ -36,17 +36,22 @@ jobs:
           echo VERSION=$VERSION
 
           echo "Checking version tag exists..."
-          VERSION_EXISTS=$(docker manifest inspect $IMAGE_ID:$VERSION > /dev/null)
-          # 0 if exists else 1
+          docker manifest inspect $IMAGE_ID:$VERSION > /dev/null
+          VERSION_EXISTS=$?
+          # exit code 0 if exists else 1
           echo VERSION_EXISTS=$VERSION_EXISTS
           
           # Check daily for new version of Mullvad automatically
           # If trigger is a cron build, and existing version already has been built, skip.
           # Otherwise, it was a push, or a new version exists... in which build/deply.
           if [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0" ]]; then
-            echo "Skipping existing version update..."
+            echo "------------------------------------"
+            echo "Plan: Skipping build..."
+            echo "------------------------------------"
           else
-            echo "Building Image..."
+            echo "------------------------------------"
+            echo "Plan: Building and deploying Container..."
+            echo "------------------------------------"
             docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
             
             echo "Logging in to registry..."
