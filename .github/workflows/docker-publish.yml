@@ -36,14 +36,14 @@ jobs:
           echo VERSION=$VERSION
 
           echo "Checking version tag exists..."
-          if [[ docker manifest inspect $IMAGE_ID:$VERSION > /dev/null 2>&1]]; then
+          if docker manifest inspect $IMAGE_ID:$VERSION > /dev/null 2>&1; then
             echo "Version found"
           else
             echo "Version Not Found"
           fi
           #VERSION_EXISTS=$?
           # exit code 0 if exists else 1
-          echo VERSION_EXISTS=$VERSION_EXISTS
+          #echo VERSION_EXISTS=$VERSION_EXISTS
           
           # Check daily for new version of Mullvad automatically
           # If trigger is a cron build, and existing version already has been built, skip.
