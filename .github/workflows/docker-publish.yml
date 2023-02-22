@@ -37,32 +37,32 @@ jobs:
 
           echo "Checking version tag exists..."
           if docker manifest inspect $IMAGE_ID:$VERSION > /dev/null 2>&1; then
-            echo "Version found"
+            echo "Container Registry: ${VERSION} Found"
+            VERSION_EXISTS=0
           else
-            echo "Version Not Found"
+            VERSION_EXISTS=1
+            echo "Container Registry: ${VERSION} Not Found"
           fi
-          #VERSION_EXISTS=$?
-          # exit code 0 if exists else 1
-          #echo VERSION_EXISTS=$VERSION_EXISTS
+          echo VERSION_EXISTS=$VERSION_EXISTS
           
           # Check daily for new version of Mullvad automatically
           # If trigger is a cron build, and existing version already has been built, skip.
           # Otherwise, it was a push, or a new version exists... in which case build/deploy.
-          # if [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0" ]]; then
-          #   echo "------------------------------------"
-          #   echo "Plan: Skipping build..."
-          #   echo "------------------------------------"
-          # else
-          #   echo "------------------------------------"
-          #   echo "Plan: Building and deploying Container..."
-          #   echo "------------------------------------"
-          #   docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
+          if [[ "${GITHUB_EVENT_NAME}" == "schedule" && "${VERSION_EXISTS}" == "0" ]]; then
+            echo "------------------------------------"
+            echo "Plan: Skipping build..."
+            echo "------------------------------------"
+          else
+            echo "------------------------------------"
+            echo "Plan: Building and deploying Container..."
+            echo "------------------------------------"
+            docker build . --file Dockerfile --tag $IMAGE_NAME --label "runnumber=${GITHUB_RUN_ID}"
             
-          #   echo "Logging in to registry..."
-          #   echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+            echo "Logging in to registry..."
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
             
-          #   echo "Pushing new build..."
-          #   docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
-          #   docker tag $IMAGE_NAME $IMAGE_ID:latest
-          #   docker image push --all-tags $IMAGE_ID
-          # fi
+            echo "Pushing new build..."
+            docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+            docker tag $IMAGE_NAME $IMAGE_ID:latest
+            docker image push --all-tags $IMAGE_ID
+          fi
