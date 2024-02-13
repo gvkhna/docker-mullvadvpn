@@ -80,9 +80,10 @@ COPY coredns.service microsocks.service mullvad-stdout.service tinyproxy.service
 
 COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 
-RUN systemctl enable "/usr/lib/systemd/system/coredns.service" || true \
-  && systemctl start coredns.service || true \
-  && systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
+# RUN systemctl enable "/usr/lib/systemd/system/coredns.service" || true \
+#   && systemctl start coredns.service || true
+
+RUN systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
   && systemctl start microsocks.service || true \
   && systemctl enable "/usr/lib/systemd/system/mullvad-stdout.service" || true \
   && systemctl start mullvad-stdout.service || true \
