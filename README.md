@@ -4,6 +4,12 @@
 
 A Docker container with the linux Mullvad cli client.
 
+## Update 02/13/24
+
+Mullvad CLI 2023.6 seems to be broken due a /etc/resolv.conf conflict with systemd-resolved. 
+
+Revert to 2023.1 for now.
+
 # Setup
 
 Before running setup a folder to contain your mullvad setting files such as `"myappdata/mullvadvpn"`
