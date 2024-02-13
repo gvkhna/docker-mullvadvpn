@@ -12,13 +12,13 @@ ENV CI true
 
 # Attempt fix for /etc/resolv.conf unable to be replaced due to docker
 # https://github.com/moby/moby/issues/1297#issuecomment-375137941
-# RUN apt-get update \
-#   && apt-get -y install debconf-utils \
-#   && echo resolvconf resolvconf/linkify-resolvconf boolean false | debconf-set-selections \
-#   && apt-get -y install resolvconf \
-#   && apt-get autoremove -y \
-#   && apt-get clean \
-#   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+RUN apt-get update \
+  && apt-get -y install debconf-utils \
+  && echo resolvconf resolvconf/linkify-resolvconf boolean false | debconf-set-selections \
+  && apt-get -y install resolvconf \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN apt-get update \
   && apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
@@ -95,7 +95,7 @@ COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 #   && systemctl start coredns.service || true
 
 # Attempt Fix for "Blocked: Failed to set system DNS"
-# RUN ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
+RUN ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
 
 RUN systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
   && systemctl start microsocks.service || true \
@@ -123,4 +123,4 @@ ADD resolv.conf.override /etc/resolv.conf.override
 RUN rm -rf /usr/sbin/init
 COPY entrypoint.sh /usr/sbin/init
 RUN chmod a+x /usr/sbin/init
-CMD cp /etc/resolv.conf.override /etc/resolv.conf && /usr/sbin/init
+CMD ["/usr/sbin/init"]
