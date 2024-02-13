@@ -95,7 +95,7 @@ COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 #   && systemctl start coredns.service || true
 
 # Attempt Fix for "Blocked: Failed to set system DNS"
-RUN ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+RUN ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf || true
 
 RUN systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
   && systemctl start microsocks.service || true \
