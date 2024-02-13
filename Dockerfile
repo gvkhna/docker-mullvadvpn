@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 FROM ubuntu:latest
-MAINTAINER gvkhna
+LABEL author="@gvkhna"
 LABEL org.opencontainers.image.authors="gvkhna@gvkhna.com"
 LABEL org.opencontainers.image.description Mullvad CLI Docker Image
 
@@ -9,6 +9,16 @@ ENV container docker
 ENV LC_ALL C
 ENV DEBIAN_FRONTEND noninteractive
 ENV CI true
+
+# Attempt fix for /etc/resolv.conf unable to be replaced due to docker
+# https://github.com/moby/moby/issues/1297#issuecomment-375137941
+RUN apt-get update \
+  && apt-get -y install debconf-utils \
+  && echo resolvconf resolvconf/linkify-resolvconf boolean false | debconf-set-selections \
+  && apt-get -y install resolvconf \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN apt-get update \
   && apt-get upgrade -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" \
@@ -19,6 +29,7 @@ RUN apt-get update \
   curl \
   dbus \
   dnsutils \
+  inotify-tools \
   ipcalc \
   iproute2 \
   iptables \
