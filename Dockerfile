@@ -83,6 +83,9 @@ COPY tinyproxy.conf /etc/tinyproxy/tinyproxy.conf
 # RUN systemctl enable "/usr/lib/systemd/system/coredns.service" || true \
 #   && systemctl start coredns.service || true
 
+# Attempt Fix for "Blocked: Failed to set system DNS"
+RUN ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+
 RUN systemctl enable "/usr/lib/systemd/system/microsocks.service" || true \
   && systemctl start microsocks.service || true \
   && systemctl enable "/usr/lib/systemd/system/mullvad-stdout.service" || true \
